@@ -1,8 +1,6 @@
 FROM python:3.11-slim
 
-RUN apt-get update && apt-get install
-
-WORKDIR api
+WORKDIR /api
 
 COPY . /api
 
