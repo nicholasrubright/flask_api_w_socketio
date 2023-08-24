@@ -1,4 +1,4 @@
 
 
 class Config:
-    pass
+    DEBUG = 1
