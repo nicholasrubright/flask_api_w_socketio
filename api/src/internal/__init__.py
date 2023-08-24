@@ -1,1 +1,1 @@
-from .socket import SocketSpace, sClient
+from .socket_space import SocketSpace, sClient

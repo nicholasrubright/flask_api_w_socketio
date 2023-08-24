@@ -8,20 +8,22 @@ from src.app.module import AppModule
 from src.routes import test_bp
 from src.internal import sClient, SocketSpace
 
+
 def create_config() -> Config:
     return Config()
+
 
 def create_app(name: str) -> Flask:
     app = Flask(name)
 
     app.config.from_object(create_config())
     app.url_map.strict_slashes = False
-    
+
     CORS(app)
     sClient.init_app(app)
-    sClient.on_namespace(SocketSpace('/test'))
+    sClient.on_namespace(SocketSpace())
 
-    app.register_blueprint(test_bp, url_prefix='/test')
+    app.register_blueprint(test_bp, url_prefix="/test")
 
     with app.app_context():
         injector = Injector([AppModule(app)])
