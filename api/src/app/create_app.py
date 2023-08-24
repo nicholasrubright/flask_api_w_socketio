@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from injector import Injector
 from flask_injector import FlaskInjector
+from flask_cors import CORS
 
 from src.app.module import AppModule
 from src.routes import test_bp
@@ -15,7 +16,8 @@ def create_app(name: str) -> Flask:
 
     app.config.from_object(create_config())
     app.url_map.strict_slashes = False
-
+    
+    CORS(app)
     sClient.init_app(app)
     sClient.on_namespace(SocketSpace('/test'))
 

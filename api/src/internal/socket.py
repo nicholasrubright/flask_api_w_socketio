@@ -8,7 +8,8 @@ class SocketSpace(Namespace):
         pass
 
     def on_my_event(self, data):
-        emit("my_response", data)
+        #emit("my_response", data)
+        print("hello: ", data, flush=True)
 
 
-sClient = SocketIO()
+sClient = SocketIO(cors_allowed_origins="*")
