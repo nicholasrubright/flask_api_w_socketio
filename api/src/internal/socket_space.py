@@ -1,23 +1,21 @@
-from flask_socketio import Namespace, emit, SocketIO
-import time
+from flask_socketio import Namespace, send, SocketIO, join_room, leave_room
+from src.models import Movie, MovieSchema
+
+test_movies = Movie(1, "test movie!!!")
+
 
 
 class SocketSpace(Namespace):
-    def on_connect(self):
-        print("Will be sneding thingy soon", flush=True)
-        time.sleep(10)
-        self.notifyPeople()
 
-    def notifyPeople(self):
-        emit("balls", {"data": "hello world!"})
+    def on_join(self, session):
+        context_id = session['context_id']
+        print("joined room")
+        join_room(context_id)
 
-    def on_disconnect(self):
-        pass
-
-    def on_myevent(self, data):
-        # emit("my_response", data)
-        print("Testing: ", type(data), flush=True)
-        print("hello: ", data, flush=True)
+    def on_notifyroom(self, session):
+        context_id = session['context_id']
+        movie_json = MovieSchema().dump(test_movies, many=False)
+        send(movie_json, json=True, room=context_id)
 
 
 sClient = SocketIO(cors_allowed_origins="*")
