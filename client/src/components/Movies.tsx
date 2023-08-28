@@ -28,6 +28,21 @@ interface Movie {
 export default function Movies(props: MoviesProps) {
   const { socket } = props;
 
+  const [clientId, setClientId] = useState<string>("");
+
+  useEffect(() => {
+    setClientId(Math.random().toString());
+  }, [socket]);
+
+  const [room, setRoom] = useState<string>("");
+
+  const handleEnterRoom = (e: any) => {
+    socket.emit("joinRoom", {
+      id: clientId,
+      room: room,
+    });
+  };
+
   const [hasMatch, setHasMatch] = useState<boolean>(false);
 
   useEffect(() => {
@@ -54,7 +69,12 @@ export default function Movies(props: MoviesProps) {
 
   const handleLike = (e: any) => {
     e.preventDefault();
-    socket.emit("likedMovie", JSON.stringify(movies[currentIndex]));
+
+    socket.emit("likedMovie", {
+      room: room,
+      id: clientId,
+      movie: JSON.stringify(movies[currentIndex]),
+    });
     setCurrentIndex(currentIndex + 1);
     console.log("Movie has been liked!!");
   };
@@ -62,6 +82,12 @@ export default function Movies(props: MoviesProps) {
   return (
     <div>
       <h1>Movies</h1>
+      <div>
+        <input type="text" onChange={(e) => setRoom(e.target.value)} />
+        <button type="button" onClick={(e) => handleEnterRoom(e)}>
+          Join Room
+        </button>
+      </div>
       {hasMatch && <h1>THERE WAS A MATCH!!</h1>}
       <div>
         <h4>Title: {movies[currentIndex].title}</h4>
