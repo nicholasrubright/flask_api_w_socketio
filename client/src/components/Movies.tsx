@@ -43,6 +43,8 @@ export default function Movies(props: MoviesProps) {
     });
   };
 
+  const [hasDuo, setHasDuo] = useState<boolean>(false);
+
   const [hasMatch, setHasMatch] = useState<boolean>(false);
 
   useEffect(() => {
@@ -52,8 +54,15 @@ export default function Movies(props: MoviesProps) {
 
     socket.on("foundMatch", matchListener);
 
+    const duoJoinedListener = () => {
+      setHasDuo(true);
+    };
+
+    socket.on("duoJoined", duoJoinedListener);
+
     return () => {
       socket.off("foundMatch", matchListener);
+      socket.off("duoJoined", duoJoinedListener);
     };
   }, [socket]);
 
@@ -89,17 +98,26 @@ export default function Movies(props: MoviesProps) {
         </button>
       </div>
       {hasMatch && <h1>THERE WAS A MATCH!!</h1>}
-      <div>
-        <h4>Title: {movies[currentIndex].title}</h4>
-      </div>
-      <div>
-        <button type="button" onClick={(e) => handleLike(e)}>
-          Like
-        </button>
-        <button type="button" onClick={(e) => handleDislike(e)}>
-          Dislike
-        </button>
-      </div>
+      {room !== "" && !hasDuo && (
+        <div>
+          <h1>Waiting for Friend...</h1>
+        </div>
+      )}
+      {room !== "" && hasDuo && (
+        <div>
+          <div>
+            <h4>Title: {movies[currentIndex].title}</h4>
+          </div>
+          <div>
+            <button type="button" onClick={(e) => handleLike(e)}>
+              Like
+            </button>
+            <button type="button" onClick={(e) => handleDislike(e)}>
+              Dislike
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
