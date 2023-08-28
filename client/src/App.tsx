@@ -1,31 +1,28 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import Messages from "./components/Messages";
+import MessageInput from "./components/MessageInput";
 
 export default function App() {
-  const socket = io("http://localhost:8080");
+  const [socket, setSocket] = useState<any>(null);
 
-  const notifyRoom = (e: any) => {
-    socket.emit("notifyroom", { context_id: "999" });
-  };
-
-  useEffect(() => {
-    socket.connect();
-
-    function onBallsEvent(data: any) {
-      console.log("I GOT THE DATA FROM BALLS!!!: ", data);
-    }
-
-    socket.on("notifyroom", (data) => console.log("thingy: ", data));
-
-    socket.on("balls", onBallsEvent);
-  }, [socket]);
+  useEffect((): any => {
+    const newSocket = io("http://localhost:8080");
+    setSocket(newSocket);
+    return () => newSocket.close();
+  }, [setSocket]);
 
   return (
     <div>
-      <h1>Hello WOrld!!</h1>
-      <button type="button" onClick={(e) => notifyRoom(e)}>
-        Notify Room
-      </button>
+      <h1>Test Chat App</h1>
+      {socket ? (
+        <div>
+          <Messages socket={socket} />
+          <MessageInput socket={socket} />
+        </div>
+      ) : (
+        <div>Not Connected</div>
+      )}
     </div>
   );
 }
