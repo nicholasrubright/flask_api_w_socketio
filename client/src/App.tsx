@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import Messages from "./components/Messages";
-import MessageInput from "./components/MessageInput";
+import { io, Socket } from "socket.io-client";
+import Movies from "./components/Movies";
 
 export default function App() {
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect((): any => {
     const newSocket = io("http://localhost:8080");
@@ -17,8 +16,7 @@ export default function App() {
       <h1>Test Chat App</h1>
       {socket ? (
         <div>
-          <Messages socket={socket} />
-          <MessageInput socket={socket} />
+          <Movies socket={socket} />
         </div>
       ) : (
         <div>Not Connected</div>

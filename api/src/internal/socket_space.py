@@ -5,13 +5,16 @@ test_movies = Movie(1, "test movie!!!")
 
 
 class SocketSpace(Namespace):
-    # client wants to send message to all clients
-    def on_sendMessageToClients(self):
-        print("Client wants to send message to all clients", flush=True)
-        self.sendMessage()
+    def on_connect(self):
+        print("A user connected", flush=True)
 
-    def sendMessage(self):
-        emit("message", "balls")
+    # client wants to send message to all clients
+    def on_likedMovie(self, movie):
+        print("client liked movie: ", movie, flush=True)
+        self.sendFoundMatch()
+
+    def sendFoundMatch(self):
+        emit("foundMatch", broadcast=True)
 
 
 sClient = SocketIO(cors_allowed_origins="*")
